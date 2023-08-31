@@ -7,7 +7,7 @@ const User = require('../models/user');
 
 router.get('/', (req, res) => res.send('Hello World'))
 
-router.post('/register', async(req, res) => {
+router.post('/signup', async(req, res) => {
     const { email, password ,userBusinessName ,userCuit ,userMobileNumber , userAdress } = req.body;
     const newUser = new User ({email, password ,userBusinessName ,userCuit ,userMobileNumber , userAdress});
     await newUser.save();   
