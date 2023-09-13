@@ -52,14 +52,15 @@ router.get('/product/:productId', async(req, res) => {
       if (!result) {
         return res.status(404).json({ error: 'Producto no encontrado' });
       }
+
+      const product = await Product.findById( productId )
   
-      res.json(result);
+      res.json({ data: product });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error al actualizar el producto' });
     }
   });
-
 
 
 
