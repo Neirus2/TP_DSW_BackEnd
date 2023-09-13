@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user'); 
 
+
 router.get('/', (req, res) => res.send('Hello World'))
 
 router.post('/signup', async(req, res) => {
@@ -76,6 +77,9 @@ router.get ('/private-tasks',verifyToken, (req, res) => {
         }
     ])
 });
+
+
+
 
 module.exports = router;
 
