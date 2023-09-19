@@ -3,10 +3,10 @@ const { Schema, model } = require('mongoose');
 const userSchema = new Schema ({
     email: String,
     password: String,
-    userBusinessName: String,
-    userCuit: Number,
-    userMobileNumber: String,
-    userAdress: String,
+    businessName: String,
+    cuit: Number,
+    phoneNumber: String,
+    address: String,
 }, {
     timestamps: true
 });

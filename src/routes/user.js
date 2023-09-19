@@ -9,9 +9,19 @@ const User = require('../models/user');
 router.get('/', (req, res) => res.send('Hello World'))
 
 router.post('/signup', async(req, res) => {
-    const { email, password ,userBusinessName ,userCuit ,userMobileNumber , userAdress } = req.body;
-    const newUser = new User ({email, password ,userBusinessName ,userCuit ,userMobileNumber , userAdress});
-    await newUser.save();   
+    const { email, password ,businessName ,cuit ,phoneNumber , address } = req.body;
+    const newUser = new User ({email, password ,businessName ,cuit ,phoneNumber , address});
+    try {
+        const existingUser = await User.findOne({email: email});
+    
+        if (existingUser) {
+          return res.status(400).send("Mail Existente");
+        }
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("Error al crear cuenta");
+      }  
     
     const token = jwt.sign({ _id: newUser._id }, 'secretKey')
 

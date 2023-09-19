@@ -8,7 +8,7 @@ app.use(express.json());
 
 require('./database.js');
 
-app.use('/api', require('./routes/index.js'));
+app.use('/api', require('./routes/user.js'));
 app.use('/api', require('./routes/product.js'));
 app.use('/api', require('./routes/supplier.js'));
 app.use('/api', require('./routes/discount.js'));
