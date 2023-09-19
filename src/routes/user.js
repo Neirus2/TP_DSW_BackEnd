@@ -11,17 +11,20 @@ router.get('/', (req, res) => res.send('Hello World'))
 router.post('/signup', async(req, res) => {
     const { email, password ,businessName ,cuit ,phoneNumber , address } = req.body;
     const newUser = new User ({email, password ,businessName ,cuit ,phoneNumber , address});
-    try {
-        const existingUser = await User.findOne({email: email});
     
-        if (existingUser) {
-          return res.status(400).send("Mail Existente");
-        }
+    try {
+         const existingUser = await User.findOne({email: email});
 
-      } catch (error) {
-        console.error(error);
-        res.status(500).send("Error al crear cuenta");
-      }  
+         if (existingUser) {
+           return res.status(400).send("Mail Existente");
+         }
+
+       } catch (error) {
+         console.error(error);
+         res.status(500).send("Error al crear cuenta");
+       }
+
+    await newUser.save();   
     
     const token = jwt.sign({ _id: newUser._id }, 'secretKey')
 
