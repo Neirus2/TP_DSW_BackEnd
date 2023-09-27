@@ -3,9 +3,10 @@ const router = Router();
 
 const jwt = require('jsonwebtoken');
 
-const Product = require('../models/product')
+const Product = require('../models/product');
+const productController = require('../controllers/productController');
 
-
+router.get('/products', productController.getProducts);
 
 router.post('/createNewProduct', async(req, res) => {
     const { desc, stock, price  } = req.body;
