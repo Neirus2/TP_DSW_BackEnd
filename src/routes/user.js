@@ -9,8 +9,8 @@ const User = require('../models/user');
 router.get('/', (req, res) => res.send('Hello World'))
 
 router.post('/signup', async(req, res) => {
-    const { email, password ,businessName ,cuit ,phoneNumber , address } = req.body;
-    const newUser = new User ({email, password ,businessName ,cuit ,phoneNumber , address});
+    const { email, password ,businessName ,cuit ,phoneNumber , address, profileImage } = req.body;
+    const newUser = new User ({email, password ,businessName ,cuit ,phoneNumber , address, profileImage});
     
     try {
          const existingUser = await User.findOne({email: email});
@@ -18,7 +18,7 @@ router.post('/signup', async(req, res) => {
          if (existingUser) {
            return res.status(400).send("Mail Existente");
          }
-
+    newUser.profileImage = profileImage;
        } catch (error) {
          console.error(error);
          res.status(500).send("Error al crear cuenta");
@@ -26,7 +26,7 @@ router.post('/signup', async(req, res) => {
 
     await newUser.save();   
     
-    const token = jwt.sign({ _id: newUser._id }, 'secretKey')
+    const token = jwt.sign({ _id: newUser._id, profileImage: newUser.profileImage }, 'secretKey')
 
     res.status(200).json({token});
 });
@@ -38,7 +38,7 @@ router.post('/login', async(req, res) => {
     if (!user) return res.status(401).send("Email no existe");
     if ( user.password !== password ) return res.status(401).send("Contraseña Incorrecta");
 
-    const token = jwt.sign({ _id: user._id, userBusinessName: user.userBusinessName }, 'secretKey');
+    const token = jwt.sign({ _id: user._id, userBusinessName: user.userBusinessName, profileImage: user.profileImage}, 'secretKey');
     res.status(200).json({token});
 
 });
@@ -111,3 +111,4 @@ function verifyToken (req, res, next) {
     next();
 }   
 
+module.exports.verifyToken = verifyToken;
