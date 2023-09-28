@@ -112,3 +112,29 @@ function verifyToken (req, res, next) {
 }   
 
 module.exports.verifyToken = verifyToken;
+
+router.get('/user', verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Aquí puedes seleccionar los campos que deseas enviar al frontend
+    const userData = {
+      email: user.email,
+      businessName: user.businessName,
+      cuit: user.cuit,
+      phoneNumber: user.phoneNumber,
+      address: user.address,
+      profileImage: user.profileImage,
+    };
+
+    res.status(200).json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los datos del usuario' });
+  }
+});
