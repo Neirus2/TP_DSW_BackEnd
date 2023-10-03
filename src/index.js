@@ -9,7 +9,6 @@ app.use(bodyParser.json());
 
 require('./database.js');
 
-// No necesitas el prefijo /api aquí, ya que lo incluiste en enviar-correo.js
 app.use('/api', require('./routes/user.js'));
 app.use('/api', require('./routes/product.js'));
 app.use('/api', require('./routes/supplier.js'));

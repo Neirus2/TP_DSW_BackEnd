@@ -1,29 +1,31 @@
 const { Router } = require('express');
 const router = Router();
 const nodemailer = require('nodemailer');
+const xss = require('xss-clean');
+const validator = require('validator');
+router.use(xss());
 
-// Configura el transporte de correo electrónico
 const transporter = nodemailer.createTransport({
-  service: 'Gmail', // Utiliza el servicio de correo electrónico que prefieras o proporciona la configuración de SMTP
+  service: 'Gmail',
   auth: {
-    user: 'enterprisempss@gmail.com', // Tu dirección de correo electrónico
-    pass: 'qeng euuo xbbb abus' // Tu contraseña de correo electrónico (asegúrate de que sea segura)
+    user: 'enterprisempss@gmail.com', 
+    pass: 'qeng euuo xbbb abus' //contraseña de aplicación generada en gmail
   }
 });
-
-// Ruta para enviar correos electrónicos
 router.post('/enviar-correo', (req, res) => {
   const { name, email, message } = req.body;
 
-  // Configura las opciones del correo electrónico
+
   const opcionesCorreo = {
-    from: email, // Tu dirección de correo electrónico
+    from: name, 
     to: 'enterprisempss@gmail.com',
     subject:  email,
     text: message
   };
+      if (!validator.isEmail(email)) { return res.status(401).send('Correo electrónico no válido');}
+      if (!validator.isAlpha(name.replace(/ /g, ''))) { return res.status(401).send('Nombre no válido');}
+      if(message.length > 500){ return res.status(401).send('El mensaje no puede superar los 500 caractéres')}
 
-  // Envía el correo electrónico
   transporter.sendMail(opcionesCorreo, (error, info) => {
     if (error) {
       console.error('Error al enviar el correo electrónico:', error);

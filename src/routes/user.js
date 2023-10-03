@@ -5,13 +5,21 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user'); 
 
+const xss = require('xss-clean');
 
+const validator = require('validator');
+router.use(xss());
 router.get('/', (req, res) => res.send('Hello World'))
 
 router.post('/signup', async(req, res) => {
     const { email, password ,businessName ,cuit ,phoneNumber , address, profileImage } = req.body;
     const newUser = new User ({email, password ,businessName ,cuit ,phoneNumber , address, profileImage});
-    
+      if (!validator.isEmail(email)) {
+    return res.status(400).send('Correo electrónico no válido');
+                                     }
+ if (password.length < 8 || !/[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/.test(password)) {
+    return res.status(400).send('La contraseña debe tener al menos 8 caracteres de longitud y contener al menos un carácter especial');
+  }
     try {
          const existingUser = await User.findOne({email: email});
 
@@ -35,6 +43,7 @@ router.post('/login', async(req, res) => {
 
     const { email, password } = req.body;
     const user = await User.findOne({email})
+    
     if (!user) return res.status(401).send("Email no existe");
     if ( user.password !== password ) return res.status(401).send("Contraseña Incorrecta");
 

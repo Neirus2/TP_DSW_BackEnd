@@ -5,9 +5,7 @@ const userSchema = new Schema ({
   daysFrom: Number,
   daysUntil: Number
 },{
-  timestamps: true // es una opción que se utiliza para registrar automáticamente 
-  //las fechas de creación (createdAt)  y actualización (updatedAt) de un documento 
-  //en una colección de MongoDB.
+  timestamps: true 
 });
 
 module.exports = model('Discount', userSchema)
