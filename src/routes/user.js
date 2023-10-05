@@ -47,8 +47,8 @@ router.post('/login', async(req, res) => {
     if (!user) return res.status(401).send("Email no existe");
     if ( user.password !== password ) return res.status(401).send("Contraseña Incorrecta");
 
-    const token = jwt.sign({ _id: user._id, userBusinessName: user.userBusinessName, profileImage: user.profileImage}, 'secretKey');
-    res.status(200).json({token});
+    const token = jwt.sign({ _id: user._id, userBusinessName: user.userBusinessName, profileImage: user.profileImage, role: user.role,}, 'secretKey');
+    res.status(200).json({ token, userRole: user.userRole });
 
 });
 

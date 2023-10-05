@@ -5,6 +5,7 @@ const xss = require('xss-clean');
 const validator = require('validator');
 router.use(xss());
 
+const checkUserRole = require('../middleware/authMiddleware');
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -12,7 +13,7 @@ const transporter = nodemailer.createTransport({
     pass: 'qeng euuo xbbb abus' //contraseña de aplicación generada en gmail
   }
 });
-router.post('/enviar-correo', (req, res) => {
+router.post('/enviar-correo', checkUserRole('Administrador'), (req, res) => {
   const { name, email, message } = req.body;
 
 
