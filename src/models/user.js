@@ -8,11 +8,7 @@ const userSchema = new mongoose.Schema ({
     phoneNumber: String,
     address: String,
     profileImage: String,
-    role: {
-    type: String,
-    enum: ['Usuario Común', 'Administrador'], 
-    default: 'Usuario Común', 
-             },
+    role: String,
 }, {
     timestamps: true
 });

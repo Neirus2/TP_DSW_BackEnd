@@ -12,8 +12,9 @@ router.use(xss());
 router.get('/', (req, res) => res.send('Hello World'))
 
 router.post('/signup', async(req, res) => {
+    const role = 'Usuario Comun';
     const { email, password ,businessName ,cuit ,phoneNumber , address, profileImage } = req.body;
-    const newUser = new User ({email, password ,businessName ,cuit ,phoneNumber , address, profileImage});
+    const newUser = new User ({email, password ,businessName ,cuit ,phoneNumber , address, profileImage, role});
       if (!validator.isEmail(email)) {
     return res.status(400).send('Correo electrónico no válido');
                                      }
@@ -39,18 +40,19 @@ router.post('/signup', async(req, res) => {
     res.status(200).json({token});
 });
 
-router.post('/login', async(req, res) => {
+  router.post('/login', async(req, res) => {
 
-    const { email, password } = req.body;
-    const user = await User.findOne({email})
-    
-    if (!user) return res.status(401).send("Email no existe");
-    if ( user.password !== password ) return res.status(401).send("Contraseña Incorrecta");
+      const { email, password } = req.body;
+      const user = await User.findOne({email})
+      
+      if (!user) return res.status(401).send("Email no existe");
+      if ( user.password !== password ) return res.status(401).send("Contraseña Incorrecta");
 
-    const token = jwt.sign({ _id: user._id, userBusinessName: user.userBusinessName, profileImage: user.profileImage, role: user.role,}, 'secretKey');
-    res.status(200).json({ token, userRole: user.userRole });
+      const token = jwt.sign({ _id: user._id, userBusinessName: user.userBusinessName, profileImage: user.profileImag, role: user.role}, 'secretKey');
+      res.status(200).json({ token });
+      console.log(user.role);
 
-});
+  });
 
 router.get ('/tasks', (req, res) => {
 
