@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-
+const path = require('path');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user'); 
@@ -8,8 +8,14 @@ const User = require('../models/user');
 const xss = require('xss-clean');
 
 const validator = require('validator');
+
+const carpetaRelativa = '';
+const rutaAbsoluta = path.resolve(carpetaRelativa);
+
 router.use(xss());
-router.get('/', (req, res) => res.send('Hello World'))
+router.get('/', (req, res) => res.send('Hello World'));
+
+
 
 router.post('/signup', async(req, res) => {
     const role = 'Usuario Comun';
@@ -48,9 +54,10 @@ router.post('/signup', async(req, res) => {
       if (!user) return res.status(401).send("Email no existe");
       if ( user.password !== password ) return res.status(401).send("Contraseña Incorrecta");
 
-      const token = jwt.sign({ _id: user._id, userBusinessName: user.userBusinessName, profileImage: user.profileImag, role: user.role}, 'secretKey');
+      const token = jwt.sign({ _id: user._id, role: user.role}, 'secretKey');
       res.status(200).json({ token });
       console.log(user.role);
+      console.log(token);
 
   });
 
@@ -135,6 +142,7 @@ router.get('/user', verifyToken, async (req, res) => {
 
     // Aquí puedes seleccionar los campos que deseas enviar al frontend
     const userData = {
+      id:user._id,
       email: user.email,
       businessName: user.businessName,
       cuit: user.cuit,
@@ -149,3 +157,22 @@ router.get('/user', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener los datos del usuario' });
   }
 });
+
+  router.get('/user/:userId', async (req, res) => {    
+    
+    try {
+      const userId = req.params.userId;
+      console.log(userId);          
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      const imagePath = path.join( rutaAbsoluta  , user.profileImage); // Crea una ruta absoluta
+      console.log(imagePath);
+      res.status(200).sendFile(imagePath);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al obtener la imagen del usuario' });
+    }
+  });

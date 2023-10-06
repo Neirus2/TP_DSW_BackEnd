@@ -8,7 +8,7 @@ const createAdminUser = async () => {
     if (!existingAdminUser) {
       const adminUser = new User({
         email: 'admin@example.com', 
-        password: await bcrypt.hash('adminpassword', 10), 
+        password: 'adminpassword', 
         role: 'Administrador',
       });
 
