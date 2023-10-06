@@ -10,9 +10,9 @@ const userSchema = new mongoose.Schema ({
     profileImage: String,
     role: {
     type: String,
-    enum: ['Usuario Común', 'Administrador'], // Define los roles permitidos
-    default: 'Usuario Común', // Establece el rol predeterminado
-          },
+    enum: ['Usuario Común', 'Administrador'], 
+    default: 'Usuario Común', 
+             },
 }, {
     timestamps: true
 });

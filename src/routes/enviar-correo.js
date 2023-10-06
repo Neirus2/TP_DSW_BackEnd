@@ -16,7 +16,6 @@ const transporter = nodemailer.createTransport({
 router.post('/enviar-correo', checkUserRole('Administrador'), (req, res) => {
   const { name, email, message } = req.body;
 
-
   const opcionesCorreo = {
     from: name, 
     to: 'enterprisempss@gmail.com',

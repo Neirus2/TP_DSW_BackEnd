@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
-
+require('./initAdminUser');
 require('./database.js');
 
 app.use('/api', require('./routes/user.js'));
