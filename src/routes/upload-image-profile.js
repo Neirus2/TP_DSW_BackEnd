@@ -15,7 +15,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Ruta para cargar una imagen de perfil
 router.post('/upload-profile-image', verifyToken, upload.single('profileImage'), async (req, res) => {
   try {
     const imagePath = req.file.path;
