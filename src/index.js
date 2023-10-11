@@ -17,7 +17,13 @@ app.use('/api', require('./routes/client.js'));
 app.use('/api',require('./routes/upload-image-profile.js'));
 app.use(require('./routes/enviar-correo.js'));
 app.use('/uploadsProfileImages', express.static(path.join(__dirname, 'uploadsProfileImages')));
+app.use('/uploadsProductsImages', express.static('uploadsProductsImages'));
 
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Algo salió mal en el servidor');
+  });
+  
 
 app.listen(3000);
 console.log('Server running on port', 3000);

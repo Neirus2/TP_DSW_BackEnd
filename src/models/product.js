@@ -4,6 +4,7 @@ const userSchema = new Schema ({
     desc: String,
     stock: Number,
     price: Number,
+    image: String
 }, {
     timestamps: true
 });

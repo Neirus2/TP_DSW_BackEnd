@@ -1,35 +1,62 @@
 const { Router } = require('express');
 const router = Router();
-
 const jwt = require('jsonwebtoken');
-
 const Product = require('../models/product');
 const productController = require('../controllers/productController');
+const multer = require('multer');
+const path = require('path');
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploadsProductsImages/'); // Directorio donde se guardan las imágenes
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Nombre de archivo único
+  },
+});
+
+const upload = multer({ storage });
 
 router.get('/products', productController.getProducts);
 
-router.post('/createNewProduct', async(req, res) => {
-    const { desc, stock, price  } = req.body;
-    const newProduct = new Product ({desc, stock, price});
-    await newProduct.save();   
-    
-    const token = jwt.sign({ _id: newProduct._id }, 'secretKey')
+router.post('/createNewProduct', upload.single('image'), async (req, res) => {
+  const { desc, stock, price } = req.body;
+  
+  if (!req.file) {
+    return res.status(400).json({ error: 'No se ha adjuntado una imagen' });
+  }
+  
+  const imageFileName = req.file.filename; // Nombre del archivo en el servidor
+  const image = 'uploadsProductsImages/' + imageFileName; // Ruta relativa de la imagen
 
-    res.status(200).json({token});
+  const newProduct = new Product({ desc, stock, price, image });
+  const token = jwt.sign({ _id: newProduct._id }, 'secretKey');
+  await newProduct.save();
+  res.status(200).json({ token });
 });
 
 router.get('/product/:productId', async(req, res) => {
-    const productId = req.params.productId;
-    const product = await Product.findById( productId )
-    if (!product) return res.status(401).send("Producto no existe");
-    res.json({ data: product })
+ 
+  const productId = req.params.productId;
+  const product = await Product.findById(productId);
+  if (!product) return res.status(404).send("Producto no existe");
+
+  const productDetails = {
+    desc: product.desc,
+    stock: product.stock,
+    price: product.price,
+    image: `http://localhost:3000/${product.image}` // Asegúrate de que la ruta sea correcta
+  };
+
+  res.json(productDetails);
 });
 
   router.delete('/product/:productId', async (req, res) => {
     const productId = req.params.productId;
   
     try {
-      const deletedProduct = await Product.findByIdAndDelete(productId);
+      const deletedProduct = await Product.findByIdAndDelete(productId);  
   
       if (!deletedProduct) {
         return res.status(404).json({ error: 'Producto no encontrado' });
