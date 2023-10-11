@@ -2,20 +2,19 @@ const { Router } = require('express');
 const router = Router();
 const path = require('path');
 const jwt = require('jsonwebtoken');
-
 const User = require('../models/user'); 
-
 const xss = require('xss-clean');
-
 const validator = require('validator');
-
 const carpetaRelativa = '';
 const rutaAbsoluta = path.resolve(carpetaRelativa);
 
+module.exports = router;
+
+module.exports.verifyToken = verifyToken;
+
 router.use(xss());
+
 router.get('/', (req, res) => res.send('Hello World'));
-
-
 
 router.post('/signup', async(req, res) => {
     const role = 'Usuario Comun';
@@ -61,59 +60,6 @@ router.post('/signup', async(req, res) => {
 
   });
 
-router.get ('/tasks', (req, res) => {
-
-    res.json([
-        {
-            _id: 1,
-            name: 'task one',
-            description: 'lorem ipsum',
-            date: "2023-08-27T04:30:38.931+00:00"
-        },
-        {
-            _id: 2,
-            name: 'task two',
-            description: 'lorem ipsum',
-            date: "2023-08-27T04:30:38.931+00:00"
-        },
-        {
-            _id: 3,
-            name: 'task three',
-            description: 'lorem ipsum',
-            date: "2023-08-27T04:30:38.931+00:00"
-        }
-    ])
-});
-
-router.get ('/private-tasks',verifyToken, (req, res) => {
-
-    res.json([
-        {
-            _id: 1,
-            name: 'task one',
-            description: 'lorem ipsum',
-            date: "2023-08-27T04:30:38.931+00:00"
-        },
-        {
-            _id: 2,
-            name: 'task two',
-            description: 'lorem ipsum',
-            date: "2023-08-27T04:30:38.931+00:00"
-        },
-        {
-            _id: 3,
-            name: 'task three',
-            description: 'lorem ipsum',
-            date: "2023-08-27T04:30:38.931+00:00"
-        }
-    ])
-});
-
-
-
-
-module.exports = router;
-
 function verifyToken (req, res, next) {
     if(!req.headers.authorization) {
         return res.status(401).send(" Unauthorized request ")
@@ -129,8 +75,6 @@ function verifyToken (req, res, next) {
     next();
 }   
 
-module.exports.verifyToken = verifyToken;
-
 router.get('/user', verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
@@ -140,7 +84,6 @@ router.get('/user', verifyToken, async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // Aquí puedes seleccionar los campos que deseas enviar al frontend
     const userData = {
       id:user._id,
       email: user.email,
@@ -168,8 +111,7 @@ router.get('/user', verifyToken, async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: 'Usuario no encontrado' });
       }
-      const imagePath = path.join( rutaAbsoluta  , user.profileImage); // Crea una ruta absoluta
-      console.log(imagePath);
+      const imagePath = path.join( rutaAbsoluta , user.profileImage); // Crea una ruta absoluta
       res.status(200).sendFile(imagePath);
     } catch (error) {
       console.error(error);
