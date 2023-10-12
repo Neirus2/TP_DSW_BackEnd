@@ -14,8 +14,7 @@ module.exports = router;
 module.exports.verifyToken = verifyToken;
 
   router.get('/user/:cuit', verifyToken, async(req,res)=>{
-        const userCuit= req.params.cuit;
-        console.log(userCuit);
+        const userCuit= req.params.cuit;      
   try {
     const cliente = await User.findOne({ cuit: userCuit }).exec();
 
@@ -82,22 +81,19 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+router.post('/login', async(req, res) => {
 
-  router.post('/login', async(req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({email})
 
-      const { email, password } = req.body;
-      const user = await User.findOne({email})
-      
-      
-      if (!user) return res.status(401).send("Email no existe");
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      if (!passwordMatch) return res.status(401).send("Contraseña Incorrecta");
-      const token = jwt.sign({ _id: user._id, role: user.role}, 'secretKey');
-      res.status(200).json({ token });
-      console.log(user.role);
-      console.log(token);
+  if (!user) return res.status(401).send("Email no existe");
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) return res.status(401).send("Contraseña Incorrecta");
+  const token = jwt.sign({ _id: user._id, role: user.role}, 'secretKey');
+  res.status(200).json({ token });
+  console.log(user.role);
 
-  });
+});
 
 function verifyToken (req, res, next) {
     if(!req.headers.authorization) {
@@ -156,5 +152,41 @@ router.get('/user', verifyToken, async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error al obtener la imagen del usuario' });
+    }
+  });
+
+  router.delete('/deleteUser/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    console.log(userId);
+    try {
+      const deletedUser = await User.findByIdAndDelete(userId);  
+  
+      if (!deletedUser) {
+        return res.status(404).json({ error: 'Cliente no encontrado' });
+      }
+  
+      res.json({ message: 'Cliente eliminado correctamente' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al eliminar el cliente' });
+    }
+  });
+
+  router.patch('/asignPrivileges/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const { role } = req.body;
+    const updateOps = {role}
+  
+    try {
+      const result = await User.findByIdAndUpdate( userId, updateOps );
+  
+      if (!result) {
+        return res.status(404).json({ error: 'User no encontrado' });
+      }
+  
+      res.json({message:"Privilegios asignados correctamente"});
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al actualizar privilegios' });
     }
   });
