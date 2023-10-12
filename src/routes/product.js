@@ -17,6 +17,27 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+
+router.get('/searchProducts/:searchTerm', async (req, res) => {
+  const searchTerm = req.params.searchTerm; // Utiliza 'search' en lugar de 'searchTerm'
+  try {
+    console.log(searchTerm, 'back');
+    // Realiza la búsqueda en la base de datos utilizando el término de búsqueda
+    const products = await Product.find({ desc: { $regex: searchTerm, $options: 'i' } });
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron productos' });
+    }
+
+    // Devuelve la lista de productos filtrados como respuesta
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al buscar productos' });
+  }
+});
+
+
 router.get('/products', productController.getProducts);
 
 router.post('/createNewProduct', upload.single('image'), async (req, res) => {
@@ -42,6 +63,7 @@ router.get('/product/:productId', async(req, res) => {
   if (!product) return res.status(404).send("Producto no existe");
 
   const productDetails = {
+    _id: product._id,
     desc: product.desc,
     stock: product.stock,
     price: product.price,
@@ -88,6 +110,8 @@ router.get('/product/:productId', async(req, res) => {
       res.status(500).json({ error: 'Error al actualizar el producto' });
     }
   });
+
+  
 
 
 
