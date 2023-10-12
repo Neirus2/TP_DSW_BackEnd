@@ -137,7 +137,7 @@ router.get('/user', verifyToken, async (req, res) => {
 });
 
 
-  router.get('/user/:userId', async (req, res) => {    
+  router.get('/getUserImage/:userId', async (req, res) => {    
     
     try {
       const userId = req.params.userId;
