@@ -6,7 +6,7 @@ const { verifyToken } = require('./user');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploadsProfileImages'); // Directorio donde se guardan las imágenes
+    cb(null, 'uploadsProfileImages/'); // Directorio donde se guardan las imágenes
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname); // Nombre de archivo único
