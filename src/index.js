@@ -11,6 +11,7 @@ require('./database.js');
 
 app.use('/api', require('./routes/user.js'));
 app.use('/api', require('./routes/product.js'));
+app.use('/api', require('./routes/order.js'));
 app.use('/api', require('./routes/supplier.js'));
 app.use('/api', require('./routes/discount.js'));
 app.use('/api', require('./routes/client.js'));
