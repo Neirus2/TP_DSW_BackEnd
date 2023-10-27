@@ -52,11 +52,9 @@ router.post('/signup', async (req, res) => {
       return res.status(400).send("Mail Existente");
     }
 
-    // Genera la sal y encripta la contraseña
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Crea el objeto newUser con la contraseña encriptada
     const newUser = new User({
       email,
       password: hashedPassword,
@@ -89,7 +87,7 @@ router.post('/login', async(req, res) => {
   if (!user) return res.status(401).send("Email no existe");
   const passwordMatch = await bcrypt.compare(password, user.password);
   if (!passwordMatch) return res.status(401).send("Contraseña Incorrecta");
-  const token = jwt.sign({ _id: user._id, role: user.role}, 'secretKey');
+  const token = jwt.sign({ _id: user._id, role: user.role}, 'secretKey' );
   res.status(200).json({ token });
   console.log(user.role);
 
@@ -137,23 +135,26 @@ router.get('/user', verifyToken, async (req, res) => {
 });
 
 
-  router.get('/getUserImage/:userId', async (req, res) => {    
-    
-    try {
-      const userId = req.params.userId;
-      console.log(userId);          
-      const user = await User.findById(userId);
+router.get('/getUserImage/:userId', async (req, res) => {    
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
 
-      if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
-      }
-      const imagePath = path.join( rutaAbsoluta , user.profileImage);
-      res.status(200).sendFile(imagePath);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error al obtener la imagen del usuario' });
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-  });
+
+    if (user.profileImage) {
+      const imagePath = path.join(rutaAbsoluta, user.profileImage);
+      res.status(200).sendFile(imagePath);
+    } else {
+      return res.status(404).json({ message: 'Imagen de perfil no encontrada para el usuario' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener la imagen del usuario' });
+  }
+});
 
   router.delete('/deleteUser/:userId', async (req, res) => {
     const userId = req.params.userId;
