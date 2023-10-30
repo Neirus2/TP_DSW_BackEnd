@@ -79,18 +79,33 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/login', async(req, res) => {
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  const { email, password } = req.body;
-  const user = await User.findOne({email})
+    if (!email || !password) {
+      return res.status(400).send("Faltan credenciales");
+    }
 
-  if (!user) return res.status(401).send("Email no existe");
-  const passwordMatch = await bcrypt.compare(password, user.password);
-  if (!passwordMatch) return res.status(401).send("Contraseña Incorrecta");
-  const token = jwt.sign({ _id: user._id, role: user.role}, 'secretKey' );
-  res.status(200).json({ token });
-  console.log(user.role);
+    const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.status(401).send("Credenciales inválidas");
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).send("Credenciales inválidas");
+    }
+
+    const token = jwt.sign({ _id: user._id, role: user.role }, 'secretKey');
+    res.status(200).json({ token });
+    console.log(user.role);
+  } catch (error) {
+    console.error("Error en la autenticación:", error);
+    res.status(500).send("Error en la autenticación");
+  }
 });
 
 function verifyToken (req, res, next) {

@@ -8,10 +8,10 @@ const path = require('path');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploadsProductsImages/'); // Directorio donde se guardan las imágenes
+    cb(null, 'uploadsProductsImages/'); 
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Nombre de archivo único
+    cb(null, Date.now() + '-' + file.originalname); 
   },
 });
 
@@ -19,17 +19,18 @@ const upload = multer({ storage });
 
 
 router.get('/searchProducts/:searchTerm', async (req, res) => {
-  const searchTerm = req.params.searchTerm; // Utiliza 'search' en lugar de 'searchTerm'
+  const searchTerm = req.params.searchTerm; 
   try {
     console.log(searchTerm, 'back');
-    // Realiza la búsqueda en la base de datos utilizando el término de búsqueda
-    const products = await Product.find({ desc: { $regex: searchTerm, $options: 'i' } });
+
+    const products = await Product.find({ desc: { $regex: searchTerm, $options: 'i' } }); //$options: 'i' es una opción de modificador en una expresión de expresión regular utilizada en la consulta de la base de datos MongoDB.
+//En el contexto de MongoDB, cuando usas expresiones regulares con $regex para realizar búsquedas, $options: 'i' es una de las opciones disponibles para controlar cómo se realiza la búsqueda. En particular:
+//'i' significa insensible a mayúsculas y minúsculas (case-insensitive). Al usar esta opción junto con $regex, la consulta ignorará la distinción entre mayúsculas y minúsculas. Por lo tanto, la búsqueda de "Ejemplo" sería igual a "ejemplo" o "EJEMPLO".
 
     if (!products || products.length === 0) {
       return res.status(404).json({ error: 'No se encontraron productos' });
     }
 
-    // Devuelve la lista de productos filtrados como respuesta
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -41,7 +42,7 @@ router.get('/searchProducts/:searchTerm', async (req, res) => {
 router.get('/products', productController.getProducts);
 
 router.post('/createNewProduct', upload.single('image'), async (req, res) => {
-  const { desc, stock, price } = req.body;
+  const { desc, stock, price, cat } = req.body;
   
   if (!req.file) {
     return res.status(400).json({ error: 'No se ha adjuntado una imagen' });
@@ -50,7 +51,7 @@ router.post('/createNewProduct', upload.single('image'), async (req, res) => {
   const imageFileName = req.file.filename; // Nombre del archivo en el servidor
   const image = 'uploadsProductsImages/' + imageFileName; // Ruta relativa de la imagen
 
-  const newProduct = new Product({ desc, stock, price, image });
+  const newProduct = new Product({ desc, stock, price, cat,  image });
   const token = jwt.sign({ _id: newProduct._id }, 'secretKey');
   await newProduct.save();
   res.status(200).json({ token });
@@ -67,6 +68,7 @@ router.get('/product/:productId', async(req, res) => {
     desc: product.desc,
     stock: product.stock,
     price: product.price,
+    cat: product.cat,
     image: `http://localhost:3000/${product.image}` // Asegúrate de que la ruta sea correcta
   };
 
@@ -92,8 +94,8 @@ router.get('/product/:productId', async(req, res) => {
     
   router.patch('/product/:productId', async (req, res) => {
     const productId = req.params.productId;
-    const { desc, stock, price } = req.body;
-    const updateOps = {desc, stock, price}
+    const { desc, stock, price, cat } = req.body;
+    const updateOps = {desc, stock, price, cat}
   
     try {
       const result = await Product.findByIdAndUpdate( productId, updateOps );
@@ -111,7 +113,19 @@ router.get('/product/:productId', async(req, res) => {
     }
   });
 
-  
+
+router.get('/category/:category', async (req, res) => {
+  const category = req.params.category;
+
+  try {
+    const productos = await Product.find({ cat: category });
+    res.json(productos);
+    console.log(productos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al buscar productos por categoría' });
+  }
+});
 
 
 
