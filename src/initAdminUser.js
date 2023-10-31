@@ -3,12 +3,13 @@ const bcrypt = require('bcrypt');
 const User = require('./models/user');
 const createAdminUser = async () => {
   try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('adminpassword', salt);
     const existingAdminUser = await User.findOne({ role: 'Administrador' });
-
     if (!existingAdminUser) {
       const adminUser = new User({
         email: 'admin@example.com', 
-        password: 'adminpassword', 
+        password: hashedPassword, 
         role: 'Administrador',
       });
 
