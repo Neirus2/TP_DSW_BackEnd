@@ -5,8 +5,6 @@ const jwt = require('jsonwebtoken');
 
 const Discount = require('../models/discount')
 
-
-//ANDA
 router.post('/createNewDiscount', async(req, res) => {
     const { discountPercentage, daysFrom, daysUntil  } = req.body;
     const newDiscount = new Discount ({discountPercentage, daysFrom, daysUntil });
@@ -16,7 +14,7 @@ router.post('/createNewDiscount', async(req, res) => {
 
     res.status(200).json({token});
 });
-//ANDA
+
 router.get('/discount/:discountId', async(req, res) => {
     const discountId = req.params.discountId;
     const discount = await Discount.findById(discountId);
@@ -40,7 +38,7 @@ router.delete('/discount/:discountId', async (req, res) => {
       res.status(500).json({ error: 'Error al eliminar el descuento' });
     }
   });
-//ANDA 
+
   router.patch('/discount/:discountId', async (req, res) => {
     const discountId = req.params.discountId;
     const { discountPercentage, daysFrom, daysUntil } = req.body;
@@ -61,7 +59,5 @@ router.delete('/discount/:discountId', async (req, res) => {
       res.status(500).json({ error: 'Error al actualizar el descuento' });
     }
   });
-
-
 
   module.exports = router;

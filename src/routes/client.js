@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken'); //  se utiliza para importar el módulo jso
 
 const Client = require('../models/client')
 
-//ANDA
 router.post('/createNewClient', async(req, res) => {
     const { state, businessName, cuitCuil, address, phoneNumber, email, antiquity } = req.body;
     const newClient = new Client ({state,  businessName, cuitCuil, address, phoneNumber, email, antiquity});
@@ -19,7 +18,7 @@ router.post('/createNewClient', async(req, res) => {
 
     res.status(200).json({token});
 });
-//ANDA
+
 router.get('/client/:clientcuitCuil', async(req, res) => { // el /:clientcuitCuil  es el campo que le estoy mandando
     const clientcuitCuil = req.params.clientcuitCuil;
     const client = await Client.findOne( {cuitCuil: clientcuitCuil} )
@@ -27,7 +26,7 @@ router.get('/client/:clientcuitCuil', async(req, res) => { // el /:clientcuitCui
     res.json({ data: client })
 });
 
-//
+
  router.delete('/client/:clientcuitCuil', async (req, res) => {
     const clientcuitCuil = req.params.clientcuitCuil;
   
@@ -45,8 +44,6 @@ router.get('/client/:clientcuitCuil', async(req, res) => { // el /:clientcuitCui
     }
   });
  
-  
-//ANDA   
   router.patch('/client/:clientcuitCuil', async (req, res) => {
     const clientcuitCuil = req.params.clientcuitCuil;
     const { state, businessName, cuitCuil, address, phoneNumber, email, antiquity } = req.body;

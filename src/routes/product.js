@@ -17,12 +17,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-
 router.get('/searchProducts/:searchTerm', async (req, res) => {
   const searchTerm = req.params.searchTerm; 
   try {
-    console.log(searchTerm, 'back');
-
     const products = await Product.find({ desc: { $regex: searchTerm, $options: 'i' } }); //$options: 'i' es una opción de modificador en una expresión de expresión regular utilizada en la consulta de la base de datos MongoDB.
 //En el contexto de MongoDB, cuando usas expresiones regulares con $regex para realizar búsquedas, $options: 'i' es una de las opciones disponibles para controlar cómo se realiza la búsqueda. En particular:
 //'i' significa insensible a mayúsculas y minúsculas (case-insensitive). Al usar esta opción junto con $regex, la consulta ignorará la distinción entre mayúsculas y minúsculas. Por lo tanto, la búsqueda de "Ejemplo" sería igual a "ejemplo" o "EJEMPLO".
@@ -42,7 +39,7 @@ router.get('/searchProducts/:searchTerm', async (req, res) => {
 router.get('/products', productController.getProducts);
 
 router.post('/createNewProduct', upload.single('image'), async (req, res) => {
-  const { desc, stock, price, cat } = req.body;
+  const { desc, stock, price, cat, supplier } = req.body;
   
   if (!req.file) {
     return res.status(400).json({ error: 'No se ha adjuntado una imagen' });
@@ -51,7 +48,7 @@ router.post('/createNewProduct', upload.single('image'), async (req, res) => {
   const imageFileName = req.file.filename; // Nombre del archivo en el servidor
   const image = 'uploadsProductsImages/' + imageFileName; // Ruta relativa de la imagen
 
-  const newProduct = new Product({ desc, stock, price, cat,  image });
+  const newProduct = new Product({ desc, stock, price, cat, supplier,  image });
   const token = jwt.sign({ _id: newProduct._id }, 'secretKey');
   await newProduct.save();
   res.status(200).json({ token });
@@ -69,7 +66,8 @@ router.get('/product/:productId', async(req, res) => {
     stock: product.stock,
     price: product.price,
     cat: product.cat,
-    image: `http://localhost:3000/${product.image}` // Asegúrate de que la ruta sea correcta
+    supplier: product.supplier,
+    image: `http://localhost:3000/${product.image}`
   };
 
   res.json(productDetails);
@@ -94,9 +92,9 @@ router.get('/product/:productId', async(req, res) => {
     
   router.patch('/product/:productId', async (req, res) => {
     const productId = req.params.productId;
-    const { desc, stock, price, cat } = req.body;
-    const updateOps = {desc, stock, price, cat}
-  
+    const { desc, stock, price, cat, supplier } = req.body;
+    const updateOps = {desc, stock, price, cat, supplier}
+    console.log("estas son las acts",updateOps);
     try {
       const result = await Product.findByIdAndUpdate( productId, updateOps );
   
@@ -113,19 +111,16 @@ router.get('/product/:productId', async(req, res) => {
     }
   });
 
-
 router.get('/category/:category', async (req, res) => {
   const category = req.params.category;
 
   try {
     const productos = await Product.find({ cat: category });
     res.json(productos);
-    console.log(productos);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al buscar productos por categoría' });
   }
 });
-
 
   module.exports = router;

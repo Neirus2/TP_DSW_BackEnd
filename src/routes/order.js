@@ -3,7 +3,6 @@ const router = Router();
 const Order = require('../models/order');
 const jwt = require('jsonwebtoken');
 
-//ANDA
 router.post('/generateNewOrder', async(req, res) => {
     console.log('nueva order');
     const { items, total, userId } = req.body;

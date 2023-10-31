@@ -6,6 +6,7 @@ const userSchema = new Schema ({
     price: Number,
     image: String,
     cat: String,
+    supplier: String,
 }, {
     timestamps: true
 });
