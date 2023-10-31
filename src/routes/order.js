@@ -13,5 +13,21 @@ router.post('/generateNewOrder', async(req, res) => {
 
     res.status(200).json({token});
 });
+
+router.get('/orders/:userId', async(req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const pedidosUsuario = await Order.find({ userId: userId });
+    
+        res.json({ 
+          userId: userId,
+          pedidos: pedidosUsuario
+        });
+      } catch (error) {
+        res.status(500).json({ message: 'Error al recuperar pedidos del usuario' });
+      }
+  });
+  
   
 module.exports = router;
