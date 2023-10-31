@@ -4,8 +4,10 @@ const nodemailer = require('nodemailer');
 const xss = require('xss-clean');
 const validator = require('validator');
 router.use(xss());
-
+const { verifyToken } = require('./user');
+const cors = require('cors');
 const checkUserRole = require('../middleware/authMiddleware');
+router.use(cors());
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -13,7 +15,7 @@ const transporter = nodemailer.createTransport({
     pass: 'qeng euuo xbbb abus' //contraseña de aplicación generada en gmail
   }
 });
-router.post('/enviar-correo', checkUserRole('Administrador'), (req, res) => {
+router.post('/enviar-correo', verifyToken, checkUserRole('Administrador'), (req, res) => {
   const { name, email, message } = req.body;
 
   const opcionesCorreo = {

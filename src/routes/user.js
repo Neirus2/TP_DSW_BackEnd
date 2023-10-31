@@ -14,8 +14,7 @@ module.exports = router;
 module.exports.verifyToken = verifyToken;
 
   router.get('/user/:cuit', verifyToken, async(req,res)=>{
-        const userCuit= req.params.cuit;
-        console.log(userCuit);
+        const userCuit= req.params.cuit;      
   try {
     const cliente = await User.findOne({ cuit: userCuit }).exec();
 
@@ -53,11 +52,9 @@ router.post('/signup', async (req, res) => {
       return res.status(400).send("Mail Existente");
     }
 
-    // Genera la sal y encripta la contraseña
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Crea el objeto newUser con la contraseña encriptada
     const newUser = new User({
       email,
       password: hashedPassword,
@@ -82,22 +79,34 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  router.post('/login', async(req, res) => {
+    if (!email || !password) {
+      return res.status(400).send("Faltan credenciales");
+    }
 
-      const { email, password } = req.body;
-      const user = await User.findOne({email})
-      
-      
-      if (!user) return res.status(401).send("Email no existe");
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      if (!passwordMatch) return res.status(401).send("Contraseña Incorrecta");
-      const token = jwt.sign({ _id: user._id, role: user.role}, 'secretKey');
-      res.status(200).json({ token });
-      console.log(user.role);
-      console.log(token);
+    const user = await User.findOne({ email });
 
-  });
+    if (!user) {
+      return res.status(401).send("Credenciales inválidas");
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).send("Credenciales inválidas");
+    }
+
+    const token = jwt.sign({ _id: user._id, role: user.role }, 'secretKey');
+    res.status(200).json({ token });
+    console.log(user.role);
+  } catch (error) {
+    console.error("Error en la autenticación:", error);
+    res.status(500).send("Error en la autenticación");
+  }
+});
 
 function verifyToken (req, res, next) {
     if(!req.headers.authorization) {
@@ -141,20 +150,59 @@ router.get('/user', verifyToken, async (req, res) => {
 });
 
 
-  router.get('/user/:userId', async (req, res) => {    
-    
-    try {
-      const userId = req.params.userId;
-      console.log(userId);          
-      const user = await User.findById(userId);
+router.get('/getUserImage/:userId', async (req, res) => {    
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
 
-      if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
-      }
-      const imagePath = path.join( rutaAbsoluta , user.profileImage);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    if (user.profileImage) {
+      const imagePath = path.join(rutaAbsoluta, user.profileImage);
       res.status(200).sendFile(imagePath);
+    } else {
+      return res.status(404).json({ message: 'Imagen de perfil no encontrada para el usuario' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener la imagen del usuario' });
+  }
+});
+
+  router.delete('/deleteUser/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    console.log(userId);
+    try {
+      const deletedUser = await User.findByIdAndDelete(userId);  
+  
+      if (!deletedUser) {
+        return res.status(404).json({ error: 'Cliente no encontrado' });
+      }
+  
+      res.json({ message: 'Cliente eliminado correctamente' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Error al obtener la imagen del usuario' });
+      res.status(500).json({ error: 'Error al eliminar el cliente' });
+    }
+  });
+
+  router.patch('/asignPrivileges/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const { role } = req.body;
+    const updateOps = {role}
+  
+    try {
+      const result = await User.findByIdAndUpdate( userId, updateOps );
+  
+      if (!result) {
+        return res.status(404).json({ error: 'User no encontrado' });
+      }
+  
+      res.json({message:"Privilegios asignados correctamente"});
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al actualizar privilegios' });
     }
   });
