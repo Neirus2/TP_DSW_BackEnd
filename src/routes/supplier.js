@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-
+const { verifyToken } = require('./user');
 const jwt = require('jsonwebtoken');
 
 const Supplier = require('../models/supplier')
@@ -31,12 +31,17 @@ router.post('/createNewSupplier', async (req, res) => {
   });
 
 //ANDA
-router.get('/supplier/:supplierCuit', async(req, res) => {
-    const cuit = req.params.supplierCuit;
-    const supplier = await Supplier.findOne({cuit})
-    if (!supplier) return res.status(401).send("Proveedor No existe");
-    res.json({ data: supplier })
+router.get('/supplier/:supplierCuit',  async (req, res) => {
+  const cuit = req.params.supplierCuit;
+  const supplier = await Supplier.findOne({ cuit });
+
+  if (!supplier) {
+    return res.status(401).json({ cuitExists: false, message: "Proveedor no existe", data: null });
+  }
+
+  return res.json({ cuitExists: true, data: supplier });
 });
+
 
   
 router.patch('/updateDetails/details/:supId', async (req, res) => {
