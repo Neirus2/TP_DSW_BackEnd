@@ -46,10 +46,15 @@ router.post('/signup', async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUserEmail = await User.findOne({ email });
+    const existingUserCuit = await User.findOne({ cuit });
 
-    if (existingUser) {
+    if (existingUserEmail) {
       return res.status(400).send("Mail Existente");
+    }
+
+    if (existingUserCuit) {
+      return res.status(400).send("CUIT Existente");
     }
 
     const salt = await bcrypt.genSalt(10);
