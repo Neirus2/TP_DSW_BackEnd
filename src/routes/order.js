@@ -31,7 +31,7 @@ router.get('/orders/:userId', async(req, res) => {
 
   router.patch('/cancelOrder/:orderId', async (req, res) => {
     try {
-      const orderId = req.params.orderId; // Suponiendo que el ID del pedido está en los parámetros de la solicitud
+      const orderId = req.params.orderId; 
       const order = await Order.findById(orderId);
   
       if (!order) {
@@ -41,8 +41,6 @@ router.get('/orders/:userId', async(req, res) => {
       if (order.status !== 'Pendiente') {
         return res.status(400).json({ message: 'No se puede cancelar un pedido que no está pendiente' });
       }
-  
-      // Cambia el estado a "cancelado" si el pedido está pendiente
       order.status = 'Cancelado';
       await order.save();
   
@@ -51,6 +49,33 @@ router.get('/orders/:userId', async(req, res) => {
       return res.status(500).json({ message: 'Error al cancelar el pedido', error });
     }
   });
-  
-  
+
+router.get('/pedidos', async (req, res) => {
+    try {
+        const pedidos = await Order.find({ status: { $in: ['Pendiente', 'En curso'] } });
+        res.json(pedidos);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.patch('/changeStatus/:orderId', async (req, res) => {
+  try {
+    const newStatus = req.body.status;
+    const orderId = req.params.orderId;
+    console.log("holaaaa");
+    console.log(newStatus);
+    console.log(orderId);
+    const order = await Order.findById(orderId);
+    order.status =newStatus;
+    console.log(order);
+    await order.save();
+    if (!order) {
+      return res.status(404).json({ message: 'Pedido no encontrado' });
+    }else {res.status(200).json({ message: 'Pedido actualizado exitosamente' });}
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
