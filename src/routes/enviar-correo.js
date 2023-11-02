@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
     pass: 'qeng euuo xbbb abus' //contraseña de aplicación generada en gmail
   }
 });
-router.post('/enviar-correo', verifyToken, checkUserRole('Administrador'), (req, res) => {
+router.post('/enviar-correo', verifyToken, (req, res) => {
   const { name, email, message } = req.body;
 
   const opcionesCorreo = {
