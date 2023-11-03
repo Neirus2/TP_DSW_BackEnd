@@ -122,4 +122,29 @@ router.get('/category/:category', async (req, res) => {
   }
 });
 
-  module.exports = router;
+router.patch('/orderStockProduct', async (req, res) => {
+  const pedido = req.body.orderData;
+  const { items } = pedido;
+  try {
+    for (const item of items)
+     {
+      // Busca el producto en la base de datos
+      console.log("id item", item);
+      const producto = await Product.findById(item._id);      
+      // Actualiza el stock restando la cantidad del pedido
+      producto.stock -= item.quantity;
+
+      // Guarda los cambios en la base de datos
+      await producto.save();
+    }
+  } catch (error) {
+    // Manejo de errores
+    console.error('Error al restar el stock:', error);
+    throw error;
+  }
+});
+
+
+
+
+  module.exports =  router;

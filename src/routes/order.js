@@ -3,8 +3,9 @@ const router = Router();
 const Order = require('../models/order');
 const jwt = require('jsonwebtoken');
 
+
 router.post('/generateNewOrder', async(req, res) => {
-    console.log('nueva order');
+    console.log('nueva order'); 
     const { items, total, userId } = req.body;
     const newOrder = new Order ({items, total, userId, status: 'Pendiente'});
     await newOrder.save();  //espere a que le llegue la respuesta de la funcion (promesa), porque la funcion
@@ -62,10 +63,7 @@ router.get('/pedidos', async (req, res) => {
 router.patch('/changeStatus/:orderId', async (req, res) => {
   try {
     const newStatus = req.body.status;
-    const orderId = req.params.orderId;
-    console.log("holaaaa");
-    console.log(newStatus);
-    console.log(orderId);
+    const orderId = req.params.orderId;S
     const order = await Order.findById(orderId);
     order.status =newStatus;
     console.log(order);
