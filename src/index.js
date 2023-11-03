@@ -15,7 +15,6 @@ app.use('/api', require('./routes/order.js'));
 app.use('/api', require('./routes/supplier.js'));
 app.use('/api', require('./routes/discount.js'));
 app.use('/api', require('./routes/order.js'));
-app.use('/api', require('./routes/client.js'));
 app.use('/api',require('./routes/upload-image-profile.js'));
 app.use(require('./routes/enviar-correo.js'));
 app.use('/uploadsProfileImages', express.static(path.join(__dirname, 'uploadsProfileImages')));
