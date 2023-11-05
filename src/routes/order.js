@@ -63,7 +63,7 @@ router.get('/pedidos', async (req, res) => {
 router.patch('/changeStatus/:orderId', async (req, res) => {
   try {
     const newStatus = req.body.status;
-    const orderId = req.params.orderId;S
+    const orderId = req.params.orderId;
     const order = await Order.findById(orderId);
     order.status =newStatus;
     console.log(order);
