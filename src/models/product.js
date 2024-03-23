@@ -6,6 +6,8 @@ const userSchema = new Schema ({
     price: Number,
     image: String,
     cat: String,
+    stockMin: Number,
+    featured: Boolean,
     supplier: String,
 }, {
     timestamps: true

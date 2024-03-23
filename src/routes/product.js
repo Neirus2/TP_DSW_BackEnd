@@ -36,11 +36,14 @@ router.get('/searchProducts/:searchTerm', async (req, res) => {
 });
 
 
-router.get('/products', productController.getProducts);
+router.get('/product', productController.getProducts);
+
+router.get('/featuredProducts', productController.getFeaturedProducts);
+
+router.get('/noProducts', productController.getNoStockProducts);
 
 router.post('/createNewProduct', upload.single('image'), async (req, res) => {
-  const { desc, stock, price, cat, supplier } = req.body;
-  
+  const { desc, stock, price, cat, stockMin, featured, supplier } = req.body;
   if (!req.file) {
     return res.status(400).json({ error: 'No se ha adjuntado una imagen' });
   }
@@ -48,14 +51,14 @@ router.post('/createNewProduct', upload.single('image'), async (req, res) => {
   const imageFileName = req.file.filename; // Nombre del archivo en el servidor
   const image = 'uploadsProductsImages/' + imageFileName; // Ruta relativa de la imagen
 
-  const newProduct = new Product({ desc, stock, price, cat, supplier,  image });
+  const newProduct = new Product({ desc, stock, price, cat, stockMin, featured, supplier,  image });
+  console.log(newProduct);
   const token = jwt.sign({ _id: newProduct._id }, 'secretKey');
   await newProduct.save();
   res.status(200).json({ token });
 });
 
 router.get('/product/:productId', async(req, res) => {
- 
   const productId = req.params.productId;
   const product = await Product.findById(productId);
   if (!product) return res.status(404).send("Producto no existe");
@@ -66,6 +69,8 @@ router.get('/product/:productId', async(req, res) => {
     stock: product.stock,
     price: product.price,
     cat: product.cat,
+    featured: product.featured,
+    stockMin: product.stockMin,
     supplier: product.supplier,
     image: `http://localhost:3000/${product.image}`
   };
@@ -73,16 +78,39 @@ router.get('/product/:productId', async(req, res) => {
   res.json(productDetails);
 });
 
+
+/*router.get('/productByDescription/:description', async (req, res) => {
+  const { description } = req.params;
+  try {
+    const product = await Product.findOne({ desc: description });
+    if (!product) {
+      return res.status(404).send("Producto no existe");
+    }
+    const productDetails = {
+      _id: product._id,
+      desc: product.desc,
+      stock: product.stock,
+      price: product.price,
+      cat: product.cat,
+      supplier: product.supplier,
+      image: `http://localhost:3000/${product.image}`
+    };
+    res.json(productDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al buscar producto por descripción.' });
+  }
+});*/
+
+
   router.delete('/product/:productId', async (req, res) => {
     const productId = req.params.productId;
-  
     try {
       const deletedProduct = await Product.findByIdAndDelete(productId);  
   
       if (!deletedProduct) {
         return res.status(404).json({ error: 'Producto no encontrado' });
       }
-  
       res.json({ message: 'Producto eliminado correctamente' });
     } catch (error) {
       console.error(error);
@@ -92,8 +120,8 @@ router.get('/product/:productId', async(req, res) => {
     
   router.patch('/product/:productId', async (req, res) => {
     const productId = req.params.productId;
-    const { desc, stock, price, cat, supplier } = req.body;
-    const updateOps = {desc, stock, price, cat, supplier}
+    const { desc, stock, price, cat, featured, stockMin, supplier } = req.body;
+    const updateOps = {desc, stock, price, cat, featured, stockMin, supplier}
     console.log("estas son las acts",updateOps);
     try {
       const result = await Product.findByIdAndUpdate( productId, updateOps );
@@ -131,20 +159,16 @@ router.patch('/orderStockProduct', async (req, res) => {
       // Busca el producto en la base de datos
       console.log("id item", item);
       const producto = await Product.findById(item._id);      
-      // Actualiza el stock restando la cantidad del pedido
-      producto.stock -= item.quantity;
-
-      // Guarda los cambios en la base de datos
+      // Actualiza el stock restando o sumando la cantidad del pedido
+        producto.stock -= item.quantity;
+       // Guarda los cambios en la base de datos
       await producto.save();
     }
   } catch (error) {
     // Manejo de errores
-    console.error('Error al restar el stock:', error);
+    console.error('Error al actualizar el stock:', error);
     throw error;
   }
 });
-
-
-
 
   module.exports =  router;

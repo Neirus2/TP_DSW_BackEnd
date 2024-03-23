@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema ({
     address: String,
     profileImage: String,
     role: String,
+    verificationCode: String
 }, {
     timestamps: true
 });
