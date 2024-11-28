@@ -1,10 +1,11 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('./models/user');
 const createAdminUser = async () => {
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('adminpassword', salt);
+    const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASS, salt);
     const existingAdminUser = await User.findOne({ role: 'Administrador' });
     if (!existingAdminUser) {
       const adminUser = new User({
