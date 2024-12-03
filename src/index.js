@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -19,7 +18,6 @@ app.use('/api', require('./routes/product.js'));
 app.use('/api', require('./routes/order.js'));
 app.use('/api', require('./routes/supplier.js'));
 app.use('/api', require('./routes/discount.js'));
-app.use('/api', require('./routes/order.js'));
 app.use('/api', require('./routes/upload-image-profile.js'));
 
 // Rutas estáticas para imágenes
@@ -32,8 +30,5 @@ app.use((err, req, res, next) => {
     res.status(500).send('Algo salió mal en el servidor');
 });
 
-// Iniciar el servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Exportar la app sin iniciar el servidor
+module.exports = app;
