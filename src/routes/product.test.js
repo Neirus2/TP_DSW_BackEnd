@@ -1,15 +1,18 @@
-require('dotenv').config({ path: './.env' }); // Cargar variables de entorno
+//Test de integracion. Incluimos BD testing, API GET /product/:productId
+
+//require('dotenv').config({ path: './.env.test' }); // Cargar variables de entorno
 
 const request = require('supertest');
-const app = require('../index');
+const {app, server} = require('../index');
 const mongoose = require('mongoose');
+const disconnectDB = require('../database');
 const Product = require('../models/product');
 
 describe('GET /product/:productId', () => {
   let product;
 
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URI); // Conexión con URI definida en .env
+    //await mongoose.connect(process.env.DB_NAME); // Conexión con URI definida en .env
     product = new Product({
       desc: "Producto de prueba",
       stock: 10,
@@ -24,8 +27,9 @@ describe('GET /product/:productId', () => {
   });
 
   afterAll(async () => {
-    await Product.deleteMany({});
-    await mongoose.disconnect();
+    await Product.deleteMany();
+    await disconnectDB();
+    server.close();
   });
 
   it('should return product details when the product exists', async () => {
@@ -42,11 +46,14 @@ describe('GET /product/:productId', () => {
       supplier: product.supplier,
       image: expect.any(String),
     });
+    //console.log(res.body);
   });
 
   it('should return 404 when the product does not exist', async () => {
     const nonExistentId = new mongoose.Types.ObjectId();
     const res = await request(app).get(`/api/product/${nonExistentId}`);
+    //console.log(res.text);
+    //console.log(res.statusCode);
     expect(res.statusCode).toBe(404);
     expect(res.text).toBe("Producto no existe");
   });

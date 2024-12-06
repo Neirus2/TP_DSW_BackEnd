@@ -9,8 +9,8 @@ const validator = require('validator');
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'enterprisempss@gmail.com', 
-    pass: 'qeng euuo xbbb abus' 
+    user: 'totalstoreshopping@gmail.com', 
+    pass: 'metz daac vlyi iqqe' 
   }
 });
 
@@ -158,7 +158,7 @@ router.get('/getEmail/:id', async(req, res) => {
     const fechaFormateada = fechaPedido.toLocaleString('es-ES');
     if (order.status === 'Terminado') {
     const opcionesCorreo = {
-      from: 'enterprisempss@gmail.com',
+      from: 'totalstoreshopping@gmail.com',
       to: email,
       subject: 'Estado del pedido',
       text: `El pedido ${order._id} del día ${fechaFormateada} está listo para su retiro`,
@@ -180,7 +180,7 @@ router.get('/getEmail/:id', async(req, res) => {
 
     if (order.status==='Cancelado') {
       const opcionesCorreo = {
-      from: 'enterprisempss@gmail.com',
+      from: 'totalstoreshopping@gmail.com',
       to: email,
       subject: 'Estado del pedido',
       text: `El pedido ${order._id} del día ${fechaFormateada} fue cancelado. Para más información, comuníquese con la empresa.`,

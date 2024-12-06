@@ -13,8 +13,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'enterprisempss@gmail.com', 
-    pass: 'qeng euuo xbbb abus' 
+    user: 'totalstoreshopping@gmail.com', 
+    pass: 'metz daac vlyi iqqe' 
   }
 });
 
@@ -29,7 +29,7 @@ router.post('/sendCode', async(req, res) => {
     await user.save();
 
     const opcionesCorreo = {
-      from: 'enterprisempss@gmail.com',
+      from: 'totalstoreshopping@gmail.com',
       to: email,
       subject: 'Código de verificación',
       text: `Tu código de verificación es: ${code}`,

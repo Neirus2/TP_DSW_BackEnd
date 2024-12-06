@@ -11,8 +11,8 @@ router.use(cors());
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'enterprisempss@gmail.com', 
-    pass: 'qeng euuo xbbb abus' //contraseña de aplicación generada en gmail
+    user: 'totalstoreshopping@gmail.com', 
+    pass: 'metz daac vlyi iqqe'  //contraseña de aplicación generada en gmail
   }
 });
 router.post('/enviar-correo', verifyToken, (req, res) => {
@@ -20,7 +20,7 @@ router.post('/enviar-correo', verifyToken, (req, res) => {
 
   const opcionesCorreo = {
     from: name, 
-    to: 'enterprisempss@gmail.com',
+    to: 'totalstoreshopping@gmail.com',
     subject:  email,
     text: message
   };
