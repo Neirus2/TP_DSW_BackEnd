@@ -2,8 +2,11 @@ const { Router } = require('express');
 const router = Router();
 const { verifyToken } = require('./user');
 const jwt = require('jsonwebtoken');
+const { deleteSupplierController } = require('../controllers/supplierController');
 
 const Supplier = require('../models/supplier')
+
+router.delete('/deleteSupplier/:supplierId', deleteSupplierController);
 
 //ANDA
 router.post('/createNewSupplier', async (req, res) => {
@@ -14,21 +17,6 @@ router.post('/createNewSupplier', async (req, res) => {
   res.status(200).json({ token });
 });
 
- router.delete('/deleteSupplier/:supplierId', async (req, res) => {
-    const supplierId = req.params.supplierId;
-    try {
-      const deletedSupplier = await Supplier.findByIdAndDelete(supplierId);  
-  
-      if (!deletedSupplier) {
-        return res.status(404).json({ error: 'Supplier no encontrado' });
-      }
-  
-      res.json({ message: 'Supplier eliminado correctamente' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error al eliminar el supplier' });
-    }
-  });
 
 //ANDA
 /*router.get('/supplier/:supplierCuit',  async (req, res) => {

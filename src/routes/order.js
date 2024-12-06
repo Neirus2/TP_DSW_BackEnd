@@ -6,6 +6,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const validator = require('validator');
+const { generateOrderController } = require('../controllers/orderController');
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -15,16 +16,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-router.post('/generateNewOrder', async(req, res) => {
-    console.log('nueva order'); 
-    const { items, total, userId } = req.body;
-    const newOrder = new Order ({items, total, userId, status: 'Pendiente'});
-    await newOrder.save();  //espere a que le llegue la respuesta de la funcion (promesa), porque la funcion
-    //tarda mas que las lineas de codigo.
-    const token = jwt.sign({ _id: newOrder._id }, 'secretKey')
-
-    res.status(200).json({token});
-});
+router.post('/generateNewOrder', generateOrderController);
 
 router.get('/orders/:userId', async(req, res) => {
     const userId = req.params.userId;
