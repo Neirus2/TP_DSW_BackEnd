@@ -33,6 +33,7 @@
     "@types/express": "^4.17.17",
     "cross-env": "^7.0.3",
     "cypress": "^13.16.1",
+    "cypress-dotenv": "^2.0.0",
     "jest": "^29.7.0",
     "nodemon": "^3.0.1",
     "supertest": "^7.0.0"

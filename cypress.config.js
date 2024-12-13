@@ -8,5 +8,11 @@ module.exports = defineConfig({
     viewportWidth: 1280,
     viewportHeight: 720,
     defaultCommandTimeout: 10000, // Esperar 10 segundos antes de timeout
+    env: {
+      TEST_USER: process.env.TEST_USER,
+      TEST_PASS: process.env.TEST_PASS,
+      ADMIN_USER: process.env.ADMIN_USER,
+      ADMIN_PASS: process.env.ADMIN_PASS
+    }
   }
 })
