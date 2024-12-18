@@ -118,13 +118,19 @@ router.get('/product/:productId', async(req, res) => {
     }
   });
     
-  router.patch('/product/:productId', async (req, res) => {
+  router.patch('/product/:productId', upload.single('image'), async (req, res) => {
     const productId = req.params.productId;
     const { desc, stock, price, cat, featured, stockMin, supplier } = req.body;
-    const updateOps = {desc, stock, price, cat, featured, stockMin, supplier}
+    const updateOps = {desc, stock, price, cat, featured, stockMin, supplier};
+    if (req.file) {
+      const imageFileName = req.file.filename;
+      updateOps.image = 'uploadsProductsImages/' + imageFileName;
+      console.log("imagen", updateOps.image);
+    }
+    
     console.log("estas son las acts",updateOps);
     try {
-      const result = await Product.findByIdAndUpdate( productId, updateOps );
+      const result = await Product.findByIdAndUpdate( productId, updateOps, { new: true });
   
       if (!result) {
         return res.status(404).json({ error: 'Producto no encontrado' });
@@ -138,6 +144,7 @@ router.get('/product/:productId', async(req, res) => {
       res.status(500).json({ error: 'Error al actualizar el producto' });
     }
   });
+
 
 router.get('/category/:category', async (req, res) => {
   const category = req.params.category;
