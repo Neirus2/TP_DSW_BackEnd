@@ -3,14 +3,15 @@ describe('Prueba de carrito', () => {
   const userPassword = Cypress.env('TEST_PASS'); 
 
   beforeEach(() => {
-    cy.intercept('POST', 'http://localhost:3000/api/login').as('loginRequest');
+    cy.intercept('POST', `${Cypress.env('apiUrl')}/login`).as('loginRequest');
     cy.getUsers();
+    cy.get('@users').then(({ userEmail, userPassword }) => {
+      cy.login(userEmail, userPassword);
+      cy.url().should('include', '/'); 
+    });
   });
 
   it('Debería agregar productos al carrito y realizar pedido', () => {
-    cy.get('@users').then(({ userEmail, userPassword }) => {
-        cy.login(userEmail, userPassword);
-        cy.url().should('include', '/'); 
         cy.contains('button', 'Comprar').click();
         cy.location('pathname').should('include', '/product');
         cy.contains('button', 'Agregar al carrito').click();
@@ -18,6 +19,15 @@ describe('Prueba de carrito', () => {
         cy.location('pathname').should('include', '/cart');
         cy.contains('button', 'Confirmar Pedido').click();
         cy.get('.swal2-popup.swal2-show').should('be.visible').contains('¡Estado actualizado!');
-    });
   });
+  it('Debería poder eliminar productos del carrito', () => {
+    cy.contains('button', 'Comprar').click();
+    cy.location('pathname').should('include', '/product');
+    cy.contains('button', 'Agregar al carrito').click();
+    cy.get('button.cart-btn').find('i.fa-cart-shopping').click();
+    cy.location('pathname').should('include', '/cart');
+    cy.get('button.btn.btn-danger').click();
+});
+
+
 });

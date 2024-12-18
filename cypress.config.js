@@ -12,7 +12,9 @@ module.exports = defineConfig({
       TEST_USER: process.env.TEST_USER,
       TEST_PASS: process.env.TEST_PASS,
       ADMIN_USER: process.env.ADMIN_USER,
-      ADMIN_PASS: process.env.ADMIN_PASS
+      ADMIN_PASS: process.env.ADMIN_PASS,
+      apiUrl: 'http://localhost:3000/api',
+      url: 'http://localhost:4200'
     }
   }
 })

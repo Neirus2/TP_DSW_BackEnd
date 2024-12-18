@@ -1,6 +1,6 @@
 describe('Test de navegabilidad en la página', () => {
   beforeEach(() => {
-    cy.intercept('POST', 'http://localhost:3000/api/login').as('loginRequest');
+    cy.intercept('POST', `${Cypress.env('apiUrl')}/login`).as('loginRequest');
     cy.getUsers();
   });
   
@@ -29,7 +29,7 @@ describe('Test de navegabilidad en la página', () => {
         
       cy.get('nav').contains('Admin Panel').should('not.exist');
       cy.visit('/admin-panel');
-      cy.url().should('eq', 'http://localhost:4200/');
+      cy.url().should('eq', `${Cypress.env('url')}/`);
       });
     });
   

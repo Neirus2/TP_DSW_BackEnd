@@ -346,3 +346,20 @@ router.patch('/newPassword', async (req, res) => {
     return res.status(500).json({ mensaje: 'Error al cambiar la contraseña', error: error });
   }
 });
+  
+router.delete('/deleteUserByEmail', async (req, res) => {
+  const { email } = req.body; 
+
+  try {
+    const deletedUser = await User.findOneAndDelete({ email });  
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.json({ message: 'Usuario eliminado correctamente', user: deletedUser });
+  } catch (error) {
+    console.error('Error al eliminar el usuario:', error);
+    res.status(500).json({ error: 'Error al eliminar el usuario' });
+  }
+});

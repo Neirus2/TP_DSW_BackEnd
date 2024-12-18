@@ -93,4 +93,21 @@ router.get('/getSuppliers', async (req, res) => {
   }
 });
 
+router.delete('/deleteSuppliers', async (req, res)=> {
+const{cuit} = req.body;
+
+ try {
+    const deletedSupplier = await Supplier.findOneAndDelete({ cuit });  
+
+    if (!deletedSupplier) {
+      return res.status(404).json({ error: 'Supplier no encontrado' });
+    }
+
+    res.json({ message: 'Supplier eliminado correctamente', supplier: deletedSupplier });
+  } catch (error) {
+    console.error('Error al eliminar el supplier:', error);
+    res.status(500).json({ error: 'Error al eliminar el supplier' });
+  }
+
+});
 module.exports = router;

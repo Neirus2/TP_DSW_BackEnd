@@ -1,6 +1,5 @@
 Cypress.Commands.add('login', (email, password) => {
     cy.visit('/login');
-    cy.wait(2000);
     cy.get('input#form3Example3').type(email);
     cy.get('input#form3Example4').type(password);
     cy.get('button[type="submit"]').click();
@@ -25,4 +24,16 @@ Cypress.Commands.add('login', (email, password) => {
       };
       return cy.wrap(users).as('users'); 
     });
-
+  
+  Cypress.Commands.add('register', (razon, email, pass, cuit, telef, address) =>{
+    cy.visit('/signup');
+    cy.wait(2000);
+    cy.get('input#form3Example1').type(razon);
+    cy.get('input#form3Example2').type(email);
+    cy.get('input#form3Example3').type(pass);
+    cy.get('input#form3Example4').type(cuit);
+    cy.get('input#form3Example5').type(telef);
+    cy.get('input#form3Example6').type(address);
+    cy.get('button[type="submit"]').click();
+    
+  });
