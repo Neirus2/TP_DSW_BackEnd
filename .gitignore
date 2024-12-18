@@ -1,3 +1,5 @@
 /node_modules
 uploadsProductsImages/*
 uploadsProfileImages/*
+uploadsProductsImages/.gitkeep
+uploadsProfileImages/.gitkeep
