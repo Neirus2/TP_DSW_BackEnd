@@ -1,9 +1,15 @@
-require('dotenv').config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env.development' });
+require('dotenv').config();
 const mongoose = require('mongoose');
 console.log(process.env.NODE_ENV);
 console.log(process.env.DB_NAME);
-// Cargar las variables de entorno
-const dbURI = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}/${process.env.DB_NAME}`;
+
+let dbURI;
+
+if (process.env.NODE_ENV === 'test') {
+    dbURI = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}/${process.env.DB_TEST_NAME}`;
+} else {
+    dbURI = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}/${process.env.DB_NAME}`;
+}
 // Conectar a MongoDB
 
 async function connectDB() {

@@ -30,7 +30,13 @@ app.use((err, req, res, next) => {
     res.status(500).send('Algo salió mal en el servidor');
   });
 
-const PORT = process.env.PORT || 0;
+let PORT;
+if (process.env.NODE_ENV === 'test') {
+  PORT = process.env.PORT = 0;
+} else {
+  PORT = process.env.PORT = 3000;
+}
+
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
