@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const userSchema = new Schema ({
+const productSchema = new Schema ({
     desc: String,
     stock: Number,
     price: Number,
@@ -13,4 +13,4 @@ const userSchema = new Schema ({
     timestamps: true
 });
 
-module.exports = model('Product', userSchema);
+module.exports = model('Product', productSchema);

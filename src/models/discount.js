@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const userSchema = new Schema ({
+const discountSchema = new Schema ({
   discountPercentage: Number,
   daysFrom: Number,
   daysUntil: Number
@@ -8,4 +8,4 @@ const userSchema = new Schema ({
   timestamps: true 
 });
 
-module.exports = model('Discount', userSchema)
+module.exports = model('Discount', discountSchema)

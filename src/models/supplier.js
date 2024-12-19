@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const userSchema = new Schema ({
+const supplierSchema = new Schema ({
     cuit: String,
     businessName: String,
     address: String,
@@ -9,4 +9,4 @@ const userSchema = new Schema ({
     timestamps: true
 });
 
-module.exports = model('Supplier', userSchema);
+module.exports = model('Supplier', supplierSchema);
