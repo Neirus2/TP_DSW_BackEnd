@@ -35,3 +35,15 @@ exports.getNoStockProducts = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener la lista de productos sin stock.' });
   }
 }
+
+exports.getCantidadProductosParaStock = async (req, res) => {
+  try {
+    const cantidad = await Product.countDocuments({
+      $expr: { $lt: ["$stock", "$stockMin"] }
+    });
+    res.json(cantidad);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener la cantidad de productos para el circulin' });
+  }
+};

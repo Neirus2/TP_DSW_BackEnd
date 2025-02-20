@@ -42,6 +42,8 @@ router.get('/featuredProducts', productController.getFeaturedProducts);
 
 router.get('/noProducts', productController.getNoStockProducts);
 
+router.get('/cantidad-ingreso-stock', productController.getCantidadProductosParaStock);
+
 router.post('/createNewProduct', upload.single('image'), async (req, res) => {
   const { desc, stock, price, cat, stockMin, featured, supplier } = req.body;
   if (!req.file) {
