@@ -11,7 +11,7 @@ jest.mock('../models/user');
 
 describe('POST /login', () => {
     afterEach(async () => {
-        await jest.clearAllMocks(); // Limpia los mocks después de cada test
+        await jest.clearAllMocks(); 
       });
     
     afterAll(async () => {

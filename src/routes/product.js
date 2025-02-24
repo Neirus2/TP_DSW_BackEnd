@@ -77,7 +77,7 @@ router.get('/product/:productId', async(req, res) => {
     image: `http://localhost:3000/${product.image}`
   };
 
-  res.json(productDetails);
+  res.status(200).json(productDetails);
 });
 
 

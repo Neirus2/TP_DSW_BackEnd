@@ -6,10 +6,10 @@ const createAdminUser = async () => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASS, salt);
-    const existingAdminUser = await User.findOne({ email: 'admin@example.com' });
+    const existingAdminUser = await User.findOne({ email: process.env.ADMIN_USER });
     if (!existingAdminUser) {
       const adminUser = new User({
-        email: 'admin@example.com', 
+        email: process.env.ADMIN_USER, 
         password: hashedPassword, 
         role: 'Administrador',
       });
@@ -30,10 +30,10 @@ const createTestUser = async () => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(process.env.TEST_PASS, salt);
-    const existingTestUser = await User.findOne({ email: 'e2e@gmail.com' });
+    const existingTestUser = await User.findOne({ email: process.env.TEST_USER });
     if (!existingTestUser) {
       const testUser = new User({
-        email: 'e2e@gmail.com', 
+        email: process.env.TEST_USER, 
         password: hashedPassword, 
         role: 'Usuario Comun',
       });
